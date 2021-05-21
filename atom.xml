@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://chao930207.github.io</id>
+    <id>https://blog.chao27.com</id>
     <title>I see you.</title>
     <subtitle>Life is a journey, not the destination, but the scenery along the should be and the mood at the view.</subtitle>
-    <icon>https://chao930207.github.io/images/favicon.ico</icon>
-    <link href="https://chao930207.github.io" />
+    <icon>https://blog.chao27.com/images/favicon.ico</icon>
+    <link href="https://blog.chao27.com" />
     <author>
       <name>Chao Liu</name>
     </author>
     <updated>2021-05-13T06:13:38.000Z</updated>
     <entry>
-        <id>https://chao930207.github.io/2021/05/13/git%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%88%E5%B9%B6%E8%A7%84%E8%8C%83%E5%8C%96/</id>
+        <id>https://blog.chao27.com/2021/05/13/git%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%88%E5%B9%B6%E8%A7%84%E8%8C%83%E5%8C%96/</id>
         <title>git提交与合并规范化</title>
-        <link rel="alternate" href="https://chao930207.github.io/2021/05/13/git%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%88%E5%B9%B6%E8%A7%84%E8%8C%83%E5%8C%96/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/05/13/git%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%88%E5%B9%B6%E8%A7%84%E8%8C%83%E5%8C%96/"/>
         <content type="html">&lt;h1 id=&#34;背景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#背景&#34;&gt;#&lt;/a&gt; 背景&lt;/h1&gt;
 &lt;div class=&#34;note info&#34;&gt;
 &lt;p&gt;1、项目上的&lt;span class=&#34;kbd&#34;&gt; commit&lt;/span&gt; 信息并不是所有人都了解，导致项目的&lt;span class=&#34;kbd&#34;&gt; commit&lt;/span&gt; 信息并不是按照已约束的规范提交。&lt;/p&gt;
@@ -53,20 +53,20 @@
 &lt;h1 id=&#34;参考&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#参考&#34;&gt;#&lt;/a&gt; 参考&lt;/h1&gt;
 &lt;p&gt;&lt;img data-src=&#34;/images/lc/1/1-6.png&#34; alt=&#34;avatar&#34; /&gt;&lt;/p&gt;
 </content>
-        <category term="技术" scheme="https://chao930207.github.io/categories/%E6%8A%80%E6%9C%AF/" />
-        <category term="工具" scheme="https://chao930207.github.io/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/" />
-        <category term="GIT" scheme="https://chao930207.github.io/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/GIT/" />
-        <category term="流程" scheme="https://chao930207.github.io/categories/%E6%B5%81%E7%A8%8B/" />
-        <category term="规范" scheme="https://chao930207.github.io/categories/%E6%B5%81%E7%A8%8B/%E8%A7%84%E8%8C%83/" />
-        <category term="技术" scheme="https://chao930207.github.io/tags/%E6%8A%80%E6%9C%AF/" />
-        <category term="GIT" scheme="https://chao930207.github.io/tags/GIT/" />
-        <category term="规范" scheme="https://chao930207.github.io/tags/%E8%A7%84%E8%8C%83/" />
+        <category term="技术" scheme="https://blog.chao27.com/categories/%E6%8A%80%E6%9C%AF/" />
+        <category term="工具" scheme="https://blog.chao27.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/" />
+        <category term="GIT" scheme="https://blog.chao27.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/GIT/" />
+        <category term="流程" scheme="https://blog.chao27.com/categories/%E6%B5%81%E7%A8%8B/" />
+        <category term="规范" scheme="https://blog.chao27.com/categories/%E6%B5%81%E7%A8%8B/%E8%A7%84%E8%8C%83/" />
+        <category term="技术" scheme="https://blog.chao27.com/tags/%E6%8A%80%E6%9C%AF/" />
+        <category term="GIT" scheme="https://blog.chao27.com/tags/GIT/" />
+        <category term="规范" scheme="https://blog.chao27.com/tags/%E8%A7%84%E8%8C%83/" />
         <updated>2021-05-13T06:13:38.000Z</updated>
     </entry>
     <entry>
-        <id>https://chao930207.github.io/2021/05/11/hello-world/</id>
+        <id>https://blog.chao27.com/2021/05/11/hello-world/</id>
         <title>Hello World</title>
-        <link rel="alternate" href="https://chao930207.github.io/2021/05/11/hello-world/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/05/11/hello-world/"/>
         <content type="html">&lt;p&gt;Welcome to &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9oZXhvLmlvLw==&#34;&gt;Hexo&lt;/span&gt;! This is your very first post. Check &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9oZXhvLmlvL2RvY3Mv&#34;&gt;documentation&lt;/span&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9oZXhvLmlvL2RvY3MvdHJvdWJsZXNob290aW5nLmh0bWw=&#34;&gt;troubleshooting&lt;/span&gt; or you can ask me on &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2hleG9qcy9oZXhvL2lzc3Vlcw==&#34;&gt;GitHub&lt;/span&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;quick-start&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#quick-start&#34;&gt;#&lt;/a&gt; Quick Start&lt;/h2&gt;
 &lt;h3 id=&#34;create-a-new-post&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#create-a-new-post&#34;&gt;#&lt;/a&gt; Create a new post&lt;/h3&gt;
