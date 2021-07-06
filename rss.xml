@@ -10,8 +10,68 @@
         </author>
         <description>The process of life is, out of the dark, towards success.</description>
         <language>en</language>
-        <pubDate>Sun, 27 Jun 2021 20:22:33 +0800</pubDate>
-        <lastBuildDate>Sun, 27 Jun 2021 20:22:33 +0800</lastBuildDate>
+        <pubDate>Tue, 06 Jul 2021 14:26:38 +0800</pubDate>
+        <lastBuildDate>Tue, 06 Jul 2021 14:26:38 +0800</lastBuildDate>
+        <item>
+            <guid isPermalink="true">https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/</guid>
+            <title>jgitflow Mac下报错Auth fail</title>
+            <link>https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/</link>
+            <category term="技术" scheme="https://blog.chao27.com/categories/technology/" />
+            <category term="工具" scheme="https://blog.chao27.com/categories/technology/tool/" />
+            <category term="GIT" scheme="https://blog.chao27.com/categories/technology/tool/git/" />
+            <category term="技术" scheme="https://blog.chao27.com/tags/%E6%8A%80%E6%9C%AF/" />
+            <category term="GIT" scheme="https://blog.chao27.com/tags/GIT/" />
+            <pubDate>Tue, 06 Jul 2021 14:26:38 +0800</pubDate>
+            <description><![CDATA[ &lt;h1 id=&#34;背景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#背景&#34;&gt;#&lt;/a&gt; 背景&lt;/h1&gt;
+&lt;div class=&#34;note info&#34;&gt;
+&lt;p&gt;生产力替换，2017 款升级至 M1 版新电脑，进行各种配置。&lt;/p&gt;
+&lt;p&gt;当再次使用 gitflow 时，ERROR 异常，Auth fail。&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id=&#34;问题及原因&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题及原因&#34;&gt;#&lt;/a&gt; 问题及原因&lt;/h1&gt;
+&lt;h2 id=&#34;问题1&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题1&#34;&gt;#&lt;/a&gt; 问题 1&lt;/h2&gt;
+&lt;div class=&#34;note danger&#34;&gt;
+&lt;p&gt;Error finishing feature: Error finish feature: ...... &lt;span class=&#34;exturl&#34; data-url=&#34;bWFpbHRvOmdpdEB4eC5jb20=&#34;&gt;git@xx.com&lt;/span&gt;:xx/xx.git: Auth fail&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;产生此问题的原因：mac 新版的 ssh 加密解密不再支持 ssh-dss, 转而使用 openssh 引起&lt;/p&gt;
+&lt;h2 id=&#34;问题2&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题2&#34;&gt;#&lt;/a&gt; 问题 2&lt;/h2&gt;
+&lt;div class=&#34;note danger&#34;&gt;
+&lt;p&gt;Error starting release: ...... invalid privatekey&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;产生此问题的原因：本地 ssh-keygen 生成的 id_rsa 文件中不是以 -----BEGIN RSA PRIVATE KEY----- 开头，以 ----OPEN SSH 开头了&lt;/p&gt;
+&lt;h1 id=&#34;解决方案&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#解决方案&#34;&gt;#&lt;/a&gt; 解决方案&lt;/h1&gt;
+&lt;h2 id=&#34;问题1-2&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题1-2&#34;&gt;#&lt;/a&gt; 问题 1&lt;/h2&gt;
+&lt;p&gt;在.ssh/config 文件中添加如下配置&lt;/p&gt;
+&lt;details class=&#34;info&#34;&gt;&lt;summary&gt;config&lt;/summary&gt;&lt;div&gt;
+&lt;p&gt;UserKnownHostsFile  ~/.ssh/known_hosts&lt;br /&gt;
+IdentityFile ~/.ssh/id_rsa&lt;br /&gt;
+HashKnownHosts no&lt;/p&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;h2 id=&#34;问题2-2&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题2-2&#34;&gt;#&lt;/a&gt; 问题 2&lt;/h2&gt;
+&lt;p&gt;使用下面命令重新生成 ssh key&lt;/p&gt;
+&lt;figure class=&#34;highlight bash&#34;&gt;&lt;figcaption data-lang=&#34;bash&#34;&gt;&lt;span&gt;命令行提示符&lt;/span&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td data-command=&#34;[root@localhost] $&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;ssh-keygen -m PEM -t rsa -b &lt;span class=&#34;token number&#34;&gt;4096&lt;/span&gt; -C &lt;span class=&#34;token string&#34;&gt;&#34;xxx@xxx.com&#34;&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;h1 id=&#34;参考&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#参考&#34;&gt;#&lt;/a&gt; 参考&lt;/h1&gt;
+&lt;p&gt;&lt;div class=&#34;links&#34;&gt;&lt;div class=&#34;item&#34; title=&#34;eclipse foundation&#34; style=&#34;--block-color:#2c2453;&#34;&gt;&lt;span class=&#34;exturl image&#34; data-url=&#34;aHR0cHM6Ly93d3cuZWNsaXBzZS5vcmcvZm9ydW1zL2luZGV4LnBocC9tLzE2ODk5NjM=&#34; data-background-image=&#34;https://i.loli.net/2021/07/06/e1UP5rVtdylJ3S8.png&#34;&gt;&lt;/span&gt;
+          &lt;div class=&#34;info&#34;&gt;
+          &lt;span class=&#34;exturl title&#34; data-url=&#34;aHR0cHM6Ly93d3cuZWNsaXBzZS5vcmcvZm9ydW1zL2luZGV4LnBocC9tLzE2ODk5NjM=&#34;&gt;eclipse foundation&lt;/span&gt;
+          &lt;p class=&#34;desc&#34;&gt;How do I get Started???&lt;/p&gt;
+          &lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;item&#34; title=&#34;eclipse foundation&#34; style=&#34;--block-color:#2c2453;&#34;&gt;&lt;span class=&#34;exturl image&#34; data-url=&#34;aHR0cHM6Ly93d3cuZWNsaXBzZS5vcmcvZm9ydW1zL2luZGV4LnBocC90LzEwOTU1OTk=&#34; data-background-image=&#34;https://i.loli.net/2021/07/06/e1UP5rVtdylJ3S8.png&#34;&gt;&lt;/span&gt;
+          &lt;div class=&#34;info&#34;&gt;
+          &lt;span class=&#34;exturl title&#34; data-url=&#34;aHR0cHM6Ly93d3cuZWNsaXBzZS5vcmcvZm9ydW1zL2luZGV4LnBocC90LzEwOTU1OTk=&#34;&gt;eclipse foundation&lt;/span&gt;
+          &lt;p class=&#34;desc&#34;&gt;Error loading the SSH2 private keys&lt;/p&gt;
+          &lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;item&#34; title=&#34;github&#34; style=&#34;--block-color:#161b22;&#34;&gt;&lt;span class=&#34;exturl image&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL3NoaWxsbmVyL3VubGVhc2gtbWF2ZW4tcGx1Z2luL2lzc3Vlcy82Mg==&#34; data-background-image=&#34;https://i.loli.net/2021/07/06/FWNgozEfwyZYDiL.jpg&#34;&gt;&lt;/span&gt;
+          &lt;div class=&#34;info&#34;&gt;
+          &lt;span class=&#34;exturl title&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL3NoaWxsbmVyL3VubGVhc2gtbWF2ZW4tcGx1Z2luL2lzc3Vlcy82Mg==&#34;&gt;github&lt;/span&gt;
+          &lt;p class=&#34;desc&#34;&gt;Can’t build with unclear cause ‘Auth fail’&lt;/p&gt;
+          &lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;item&#34; title=&#34;github&#34; style=&#34;--block-color:#161b22;&#34;&gt;&lt;span class=&#34;exturl image&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL25ldC1zc2gvbmV0LXNzaC9pc3N1ZXMvNjMz&#34; data-background-image=&#34;https://i.loli.net/2021/07/06/FWNgozEfwyZYDiL.jpg&#34;&gt;&lt;/span&gt;
+          &lt;div class=&#34;info&#34;&gt;
+          &lt;span class=&#34;exturl title&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL25ldC1zc2gvbmV0LXNzaC9pc3N1ZXMvNjMz&#34;&gt;github&lt;/span&gt;
+          &lt;p class=&#34;desc&#34;&gt;Cannot ssh with ssh RSA keys having BEGIN OPENSSH PRIVATE KEY header (PKCS8 format)&lt;/p&gt;
+          &lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;item&#34; title=&#34;csdn&#34; style=&#34;--block-color:#fb5338;&#34;&gt;&lt;span class=&#34;exturl image&#34; data-url=&#34;aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xzcDg0Y2g4MC9hcnRpY2xlL2RldGFpbHMvODc4NjE5OTA=&#34; data-background-image=&#34;https://i.loli.net/2021/07/06/ODsKEUflwnMa3RZ.png&#34;&gt;&lt;/span&gt;
+          &lt;div class=&#34;info&#34;&gt;
+          &lt;span class=&#34;exturl title&#34; data-url=&#34;aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xzcDg0Y2g4MC9hcnRpY2xlL2RldGFpbHMvODc4NjE5OTA=&#34;&gt;csdn&lt;/span&gt;
+          &lt;p class=&#34;desc&#34;&gt;关于ssh-keygen 生成的key以“BEGIN OPENSSH PRIVATE KEY”开头&lt;/p&gt;
+          &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/p&gt;
+ ]]></description>
+        </item>
         <item>
             <guid isPermalink="true">https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-%E6%BC%93%E6%B1%9F%E8%A1%8C/</guid>
             <title>桂林-漓江行</title>
