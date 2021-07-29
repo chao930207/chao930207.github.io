@@ -8,7 +8,68 @@
     <author>
       <name>Chao Liu</name>
     </author>
-    <updated>2021-07-06T06:26:38.000Z</updated>
+    <updated>2021-07-29T08:25:33.000Z</updated>
+    <entry>
+        <id>https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Bdistinct%E4%B8%8Eorderby/</id>
+        <title>Mysql之distinct与orderby</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Bdistinct%E4%B8%8Eorderby/"/>
+        <content type="html">&lt;h1 id=&#34;问题&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题&#34;&gt;#&lt;/a&gt; 问题&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd red&#34;&gt;Unknown error 3065&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&#34;推断&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#推断&#34;&gt;#&lt;/a&gt; 推断&lt;/h1&gt;
+&lt;p&gt;sql 语句，select distinct 与 order by 一起用时，order by 字段必须在 select 中&lt;/p&gt;
+&lt;h1 id=&#34;sql-99语法&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#sql-99语法&#34;&gt;#&lt;/a&gt; SQL-99 语法&lt;/h1&gt;
+&lt;p&gt;&lt;ins class=&#34;primary&#34;&gt;SQL-99 中，在 select 中使用 distinct 关键字后，在 order by 中出现的字段名称不能超过 select 子句的范围&lt;/ins&gt;&lt;/p&gt;
+&lt;h1 id=&#34;原因&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#原因&#34;&gt;#&lt;/a&gt; 原因&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;mysql 中 distinct 的执行顺序高于 order by&lt;/li&gt;
+&lt;li&gt;distinct 执行时会对查询的记录进行去重，产生一张虚拟的临时表&lt;/li&gt;
+&lt;li&gt;order by 执行时对查询的虚拟临时表进行排序，产生新的虚拟临时表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;结论&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#结论&#34;&gt;#&lt;/a&gt; 结论&lt;/h1&gt;
+&lt;p&gt;综合来看，如果 order by 的字段不在 select 中，执行 sql 语句时首先执行 distinct，之后产生的虚拟临时表中没有 order by 的字段，所以再执行 order by 时会报错&lt;/p&gt;
+</content>
+        <category term="技术" scheme="https://blog.chao27.com/categories/technology/" />
+        <category term="数据库" scheme="https://blog.chao27.com/categories/technology/%E6%95%B0%E6%8D%AE%E5%BA%93/" />
+        <category term="mysql" scheme="https://blog.chao27.com/categories/technology/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/" />
+        <category term="mysql" scheme="https://blog.chao27.com/tags/mysql/" />
+        <category term="随手记" scheme="https://blog.chao27.com/tags/%E9%9A%8F%E6%89%8B%E8%AE%B0/" />
+        <updated>2021-07-29T08:25:33.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Btimestamp-datetime/</id>
+        <title>Mysql之timestamp/datetime</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Btimestamp-datetime/"/>
+        <content type="html">&lt;h1 id=&#34;1&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#1&#34;&gt;#&lt;/a&gt; 1&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 与时区有关，时区变化，select 出来的时间也会又变化&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; 不会，存入什么时间就是什么时间&lt;/p&gt;
+&lt;div class=&#34;note danger&#34;&gt;
+&lt;p&gt;当 MySQL 参数 &lt;span class=&#34;kbd&#34;&gt;time_zone=system&lt;/span&gt; 时，查询 &lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 字段会调用系统时区做时区转换，而由于系统时区存在全局锁问题，在多并发大数据量访问时会导致线程上下文频繁切换，CPU 使用率暴涨，系统响应变慢设置假死&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id=&#34;2&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#2&#34;&gt;#&lt;/a&gt; 2&lt;/h1&gt;
+&lt;p&gt;Mysql5.6.6 版本里面增加了一个参数 &lt;span class=&#34;kbd&#34;&gt;explicit_defaults_for_timestamp&lt;/span&gt;，其默认值为 &lt;span class=&#34;kbd&#34;&gt;false&lt;/span&gt;，它会让表定义非所见即所得，即 &lt;span class=&#34;kbd&#34;&gt;on update current_timestamp&lt;/span&gt;，没有显性赋值，则自动设置为当前系统时间&lt;/p&gt;
+&lt;h1 id=&#34;3&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#3&#34;&gt;#&lt;/a&gt; 3&lt;/h1&gt;
+&lt;p&gt;存储需要大小不同，&lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 需要 4 个字节存储&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; MySQL 5.6.4 之前，DATETIME 值需要 8 字节存储，之后版本默认是 5 个字节存储&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; 最大支 datetime (6)，(&lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 同样)，小数位秒精度当有 1-2 位时，总共需要 5+1 个字节，3-4 需要 5+2 个字节，5-6，需要 5+3 个字节&lt;br /&gt;
+例 2019-07-13 22:00:00 需要 5 个字节，2019-07-13 22:00:00.999 需要 7 个字节，2019-07-13 22:00:00.999999 需要 8 个字节&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; datetime (3) 设置默认值或 &lt;span class=&#34;kbd&#34;&gt;on update&lt;/span&gt; 时，需要注意 &lt;span class=&#34;kbd&#34;&gt;current_timestamp(3)&lt;/span&gt;，而不是 &lt;span class=&#34;kbd&#34;&gt;current_timestamp()&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;4&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#4&#34;&gt;#&lt;/a&gt; 4&lt;/h1&gt;
+&lt;p&gt;在 MySQL 5.6.4 及之后版本，可以将 &lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 和 &lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; 数据最高精确微秒&lt;/p&gt;
+&lt;h1 id=&#34;5&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#5&#34;&gt;#&lt;/a&gt; 5&lt;/h1&gt;
+&lt;p&gt;取值范围不同，&lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 所能存储的时间范围为：&#39;1970-01-01 00:00:01.000000&#39; 到 &#39;2038-01-19 03:14:07.999999&#39;&lt;/p&gt;
+&lt;p&gt;而 &lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; 所能存储的时间范围为：&#39;1000-01-01 00:00:00.000000&#39; 到 &#39;9999-12-31 23:59:59.999999&#39;&lt;/p&gt;
+&lt;h1 id=&#34;6&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#6&#34;&gt;#&lt;/a&gt; 6&lt;/h1&gt;
+&lt;p&gt;在 MySQL 5.6.5 版本之前， &lt;span class=&#34;kbd&#34;&gt;default current_timestamp on update current_timestamp&lt;/span&gt; 只适用于 &lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt;，而且一张表中，最多允许一个 &lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 字段采用该特性。 从 MySQL 5.6.5 开始， &lt;span class=&#34;kbd&#34;&gt;default current_timestamp on update current_timestamp&lt;/span&gt; 同时适用于 &lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 和 &lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt;，且不限制数量。&lt;/p&gt;
+</content>
+        <category term="技术" scheme="https://blog.chao27.com/categories/technology/" />
+        <category term="数据库" scheme="https://blog.chao27.com/categories/technology/%E6%95%B0%E6%8D%AE%E5%BA%93/" />
+        <category term="mysql" scheme="https://blog.chao27.com/categories/technology/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/" />
+        <category term="mysql" scheme="https://blog.chao27.com/tags/mysql/" />
+        <category term="随手记" scheme="https://blog.chao27.com/tags/%E9%9A%8F%E6%89%8B%E8%AE%B0/" />
+        <updated>2021-07-29T08:00:39.000Z</updated>
+    </entry>
     <entry>
         <id>https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/</id>
         <title>jgitflow Mac下报错Auth fail</title>

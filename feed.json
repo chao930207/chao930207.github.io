@@ -7,6 +7,34 @@
     "home_page_url": "https://blog.chao27.com",
     "items": [
         {
+            "id": "https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Bdistinct%E4%B8%8Eorderby/",
+            "url": "https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Bdistinct%E4%B8%8Eorderby/",
+            "title": "Mysql之distinct与orderby",
+            "date_published": "2021-07-29T08:25:33.000Z",
+            "content_html": "<h1 id=\"问题\"><a class=\"anchor\" href=\"#问题\">#</a> 问题</h1>\n<p><span class=\"kbd red\">Unknown error 3065</span></p>\n<h1 id=\"推断\"><a class=\"anchor\" href=\"#推断\">#</a> 推断</h1>\n<p>sql 语句，select distinct 与 order by 一起用时，order by 字段必须在 select 中</p>\n<h1 id=\"sql-99语法\"><a class=\"anchor\" href=\"#sql-99语法\">#</a> SQL-99 语法</h1>\n<p><ins class=\"primary\">SQL-99 中，在 select 中使用 distinct 关键字后，在 order by 中出现的字段名称不能超过 select 子句的范围</ins></p>\n<h1 id=\"原因\"><a class=\"anchor\" href=\"#原因\">#</a> 原因</h1>\n<ul>\n<li>mysql 中 distinct 的执行顺序高于 order by</li>\n<li>distinct 执行时会对查询的记录进行去重，产生一张虚拟的临时表</li>\n<li>order by 执行时对查询的虚拟临时表进行排序，产生新的虚拟临时表</li>\n</ul>\n<h1 id=\"结论\"><a class=\"anchor\" href=\"#结论\">#</a> 结论</h1>\n<p>综合来看，如果 order by 的字段不在 select 中，执行 sql 语句时首先执行 distinct，之后产生的虚拟临时表中没有 order by 的字段，所以再执行 order by 时会报错</p>\n",
+            "tags": [
+                "技术",
+                "数据库",
+                "mysql",
+                "mysql",
+                "随手记"
+            ]
+        },
+        {
+            "id": "https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Btimestamp-datetime/",
+            "url": "https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Btimestamp-datetime/",
+            "title": "Mysql之timestamp/datetime",
+            "date_published": "2021-07-29T08:00:39.000Z",
+            "content_html": "<h1 id=\"1\"><a class=\"anchor\" href=\"#1\">#</a> 1</h1>\n<p><span class=\"label\">timestamp</span> 与时区有关，时区变化，select 出来的时间也会又变化</p>\n<p><span class=\"label\">datetime</span> 不会，存入什么时间就是什么时间</p>\n<div class=\"note danger\">\n<p>当 MySQL 参数 <span class=\"kbd\">time_zone=system</span> 时，查询 <span class=\"label\">timestamp</span> 字段会调用系统时区做时区转换，而由于系统时区存在全局锁问题，在多并发大数据量访问时会导致线程上下文频繁切换，CPU 使用率暴涨，系统响应变慢设置假死</p>\n</div>\n<h1 id=\"2\"><a class=\"anchor\" href=\"#2\">#</a> 2</h1>\n<p>Mysql5.6.6 版本里面增加了一个参数 <span class=\"kbd\">explicit_defaults_for_timestamp</span>，其默认值为 <span class=\"kbd\">false</span>，它会让表定义非所见即所得，即 <span class=\"kbd\">on update current_timestamp</span>，没有显性赋值，则自动设置为当前系统时间</p>\n<h1 id=\"3\"><a class=\"anchor\" href=\"#3\">#</a> 3</h1>\n<p>存储需要大小不同，<span class=\"label\">timestamp</span> 需要 4 个字节存储</p>\n<ul>\n<li><span class=\"label\">datetime</span> MySQL 5.6.4 之前，DATETIME 值需要 8 字节存储，之后版本默认是 5 个字节存储</li>\n<li><span class=\"label\">datetime</span> 最大支 datetime (6)，(<span class=\"label\">timestamp</span> 同样)，小数位秒精度当有 1-2 位时，总共需要 5+1 个字节，3-4 需要 5+2 个字节，5-6，需要 5+3 个字节<br />\n例 2019-07-13 22:00:00 需要 5 个字节，2019-07-13 22:00:00.999 需要 7 个字节，2019-07-13 22:00:00.999999 需要 8 个字节</li>\n<li><span class=\"label\">datetime</span> datetime (3) 设置默认值或 <span class=\"kbd\">on update</span> 时，需要注意 <span class=\"kbd\">current_timestamp(3)</span>，而不是 <span class=\"kbd\">current_timestamp()</span></li>\n</ul>\n<h1 id=\"4\"><a class=\"anchor\" href=\"#4\">#</a> 4</h1>\n<p>在 MySQL 5.6.4 及之后版本，可以将 <span class=\"label\">timestamp</span> 和 <span class=\"label\">datetime</span> 数据最高精确微秒</p>\n<h1 id=\"5\"><a class=\"anchor\" href=\"#5\">#</a> 5</h1>\n<p>取值范围不同，<span class=\"label\">timestamp</span> 所能存储的时间范围为：'1970-01-01 00:00:01.000000' 到 '2038-01-19 03:14:07.999999'</p>\n<p>而 <span class=\"label\">datetime</span> 所能存储的时间范围为：'1000-01-01 00:00:00.000000' 到 '9999-12-31 23:59:59.999999'</p>\n<h1 id=\"6\"><a class=\"anchor\" href=\"#6\">#</a> 6</h1>\n<p>在 MySQL 5.6.5 版本之前， <span class=\"kbd\">default current_timestamp on update current_timestamp</span> 只适用于 <span class=\"label\">timestamp</span>，而且一张表中，最多允许一个 <span class=\"label\">timestamp</span> 字段采用该特性。 从 MySQL 5.6.5 开始， <span class=\"kbd\">default current_timestamp on update current_timestamp</span> 同时适用于 <span class=\"label\">timestamp</span> 和 <span class=\"label\">datetime</span>，且不限制数量。</p>\n",
+            "tags": [
+                "技术",
+                "数据库",
+                "mysql",
+                "mysql",
+                "随手记"
+            ]
+        },
+        {
             "id": "https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/",
             "url": "https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/",
             "title": "jgitflow Mac下报错Auth fail",
