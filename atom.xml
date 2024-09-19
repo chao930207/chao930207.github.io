@@ -8,11 +8,63 @@
     <author>
       <name>Chao Liu</name>
     </author>
-    <updated>2021-07-29T08:25:33.000Z</updated>
+    <updated>2024-09-19T08:18:06.000Z</updated>
     <entry>
-        <id>https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Bdistinct%E4%B8%8Eorderby/</id>
+        <id>https://blog.chao27.com/2024/09/19/technology/tool/git/git_multi_user_config/</id>
+        <title>适用多个用户的GIT配置</title>
+        <link rel="alternate" href="https://blog.chao27.com/2024/09/19/technology/tool/git/git_multi_user_config/"/>
+        <content type="html">&lt;div class=&#34;note default&#34;&gt;
+&lt;p&gt;目标：可以使用相同的机器用于工作和个人的多个账户进行 Git 提交，而无需手动重置你的配置。&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Git 的 &lt;span class=&#34;kbd&#34;&gt;git config&lt;/span&gt; 命令可以为 git 设置用户名、邮箱等全局选项和配置。其有很多选项和配置，其中一个就是 &lt;span class=&#34;kbd&#34;&gt;includeIf&lt;/span&gt; 选项，它能够帮助我们在拥有多个 git 用户的时候可以灵活的切换到对应的用户上，且使用起来非常方便。&lt;/p&gt;
+&lt;p&gt;比如说，你既是全职的开发者，或者经过多家公司任职，又或在业余时间适用自己账号自我提升。在这种情况下，大多数人都不想为两个或多个角色使用一个共同的配置，或者，至少他们肯定希望保持配置的某些部分是不同的，尤其是当他们在两个角色中使用同一台计算机时。&lt;/p&gt;
+&lt;h1 id=&#34;includeif的基本概念&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#includeif的基本概念&#34;&gt;#&lt;/a&gt; includeIf 的基本概念&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd&#34;&gt;includeIf&lt;/span&gt; 是 git 2.13 版本引入的一个新特性。&lt;br /&gt;
+它允许我们在配置文件中根据不同的条件来加载不同的配置文件，这个功能的语法如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;[includeIf &amp;quot;&amp;lt;condition&amp;gt;&amp;quot;]
+  path = &amp;lt;path-to-config&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中 &lt;span class=&#34;kbd&#34;&gt;&amp;lt;condition&amp;gt;&lt;/span&gt; 可以是 git 的配置，比如 &lt;span class=&#34;kbd&#34;&gt;gitdir:&amp;lt;git-directory&amp;gt;&lt;/span&gt;，也可以是通过执行命令得到的输出。当 &lt;span class=&#34;kbd&#34;&gt;&amp;lt;condition&amp;gt;&lt;/span&gt; 满足时，会加载指定的配置文件。&lt;/p&gt;
+&lt;h1 id=&#34;适用includeif管理多账户&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#适用includeif管理多账户&#34;&gt;#&lt;/a&gt; 适用 includeIf 管理多账户&lt;/h1&gt;
+&lt;p&gt;我的情况就是这样，所以我在 Git 配置中保留了两组不同的邮件 ID。这样一来，在我工作场所的项目仓库中提交的内容就会使用我工作的邮件 ID，而在我个人 GitHub 帐户中提交的内容则使用我个人的邮件 ID。&lt;/p&gt;
+&lt;p&gt;以下是我的全局配置（维护在 &lt;span class=&#34;kbd green&#34;&gt;$HOME/.gitconfig&lt;/span&gt;）中的一个片段，我将在下文中介绍。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;[user]
+  name = chaos
+  email = default@email.com
+[includeIf &amp;quot;gitdir/i:~/IdeaProjects/A/&amp;quot;]
+  path = ~/.gitmulticonfig/.gitconfig-A
+[includeIf &amp;quot;gitdir/i:~/IdeaProjects/B/&amp;quot;]
+  path = ~/.gitmulticonfig/.gitconfig-B
+[includeIf &amp;quot;gitdir/i:~/IdeaProjects/C/&amp;quot;]
+  path = ~/.gitmulticonfig/.gitconfig-C
+[includeIf &amp;quot;gitdir/i:~/IdeaProjects/D/&amp;quot;]
+  path = ~/.gitmulticonfig/.gitconfig-D
+[alias]
+	lm = log --no-merges --color --date=format:&#39;%Y-%m-%d %H:%M:%S&#39; --author=&#39;chaos&#39; --pretty=format:&#39;%Cred%h%Creset -%C(yellow)%d%Cblue %s %Cgreen(%cd) %C(bold blue)&amp;lt;%an&amp;gt;%Creset&#39; --abbrev-commit
+	lms = log --no-merges --color --stat --date=format:&#39;%Y-%m-%d %H:%M:%S&#39; --author=&#39;chaos&#39; --pretty=format:&#39;%Cred%h%Creset -%C(yellow)%d%Cblue %s %Cgreen(%cd) %C(bold blue)&amp;lt;%an&amp;gt;%Creset&#39; --abbrev-commit
+	ls = log --no-merges --color --graph --date=format:&#39;%Y-%m-%d %H:%M:%S&#39; --pretty=format:&#39;%Cred%h%Creset -%C(yellow)%d%Cblue %s %Cgreen(%cd) %C(bold blue)&amp;lt;%an&amp;gt;%Creset&#39; --abbrev-commit
+	lss = log --no-merges --color --stat --graph --date=format:&#39;%Y-%m-%d %H:%M:%S&#39; --pretty=format:&#39;%Cred%h%Creset -%C(yellow)%d%Cblue %s %Cgreen(%cd) %C(bold blue)&amp;lt;%an&amp;gt;%Creset&#39; --abbrev-commit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;默认的账户和邮箱配置为 &lt;span class=&#34;kbd red&#34;&gt;chaos&lt;/span&gt; 和 &lt;span class=&#34;kbd&#34;&gt;&lt;span class=&#34;exturl&#34; data-url=&#34;bWFpbHRvOmRlZmF1bHRAZW1haWwuY29t&#34;&gt;default@email.com&lt;/span&gt;&lt;/span&gt;，A、B、C、D4 个不同路径对应 4 个不同的配置文件。&lt;/p&gt;
+&lt;p&gt;举例，在 &lt;span class=&#34;kbd&#34;&gt;～/.gitmulticonfig/.gitconfig-A&lt;/span&gt; 文件中，设置的账户设置配置：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;[user]
+  name = nameA
+  email = your.A.email@example.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;结语&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#结语&#34;&gt;#&lt;/a&gt; 结语&lt;/h1&gt;
+&lt;p&gt;这样，当我们在 &lt;span class=&#34;kbd&#34;&gt;~/IdeaProjects/A/&lt;/span&gt; 目录下执行 git 命令时，git 就会自动加载 &lt;span class=&#34;kbd&#34;&gt;～/.gitmulticonfig/.gitconfig-A&lt;/span&gt; 文件，并适用工作账户的配置。&lt;/p&gt;
+</content>
+        <category term="技术" scheme="https://blog.chao27.com/categories/technology/" />
+        <category term="工具" scheme="https://blog.chao27.com/categories/technology/tool/" />
+        <category term="GIT" scheme="https://blog.chao27.com/categories/technology/tool/git/" />
+        <category term="技术" scheme="https://blog.chao27.com/tags/%E6%8A%80%E6%9C%AF/" />
+        <category term="GIT" scheme="https://blog.chao27.com/tags/GIT/" />
+        <updated>2024-09-19T08:18:06.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/07/29/technology/mysql/mysql_distinct_and_orderby/</id>
         <title>Mysql之distinct与orderby</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Bdistinct%E4%B8%8Eorderby/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/07/29/technology/mysql/mysql_distinct_and_orderby/"/>
         <content type="html">&lt;h1 id=&#34;问题&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#问题&#34;&gt;#&lt;/a&gt; 问题&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;kbd red&#34;&gt;Unknown error 3065&lt;/span&gt;&lt;/p&gt;
 &lt;h1 id=&#34;推断&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#推断&#34;&gt;#&lt;/a&gt; 推断&lt;/h1&gt;
@@ -36,9 +88,9 @@
         <updated>2021-07-29T08:25:33.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Btimestamp-datetime/</id>
+        <id>https://blog.chao27.com/2021/07/29/technology/mysql/mysql_timestamp_datetime/</id>
         <title>Mysql之timestamp/datetime</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/07/29/Mysql%E4%B9%8Btimestamp-datetime/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/07/29/technology/mysql/mysql_timestamp_datetime/"/>
         <content type="html">&lt;h1 id=&#34;1&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#1&#34;&gt;#&lt;/a&gt; 1&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;label&#34;&gt;timestamp&lt;/span&gt; 与时区有关，时区变化，select 出来的时间也会又变化&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;label&#34;&gt;datetime&lt;/span&gt; 不会，存入什么时间就是什么时间&lt;/p&gt;
@@ -71,9 +123,9 @@
         <updated>2021-07-29T08:00:39.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/</id>
+        <id>https://blog.chao27.com/2021/07/06/technology/tool/git/jgitflow_auth_fail_in_mac/</id>
         <title>jgitflow Mac下报错Auth fail</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/07/06/jgitflow-Mac%E4%B8%8B%E6%8A%A5%E9%94%99Auth-fail/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/07/06/technology/tool/git/jgitflow_auth_fail_in_mac/"/>
         <content type="html">&lt;h1 id=&#34;背景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#背景&#34;&gt;#&lt;/a&gt; 背景&lt;/h1&gt;
 &lt;div class=&#34;note info&#34;&gt;
 &lt;p&gt;生产力替换，2017 款升级至 M1 版新电脑，进行各种配置。&lt;/p&gt;
@@ -131,9 +183,9 @@ HashKnownHosts no&lt;/p&gt;
         <updated>2021-07-06T06:26:38.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day3-%E5%8D%81%E9%87%8C%E7%94%BB%E5%BB%8A/</id>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day3-%E5%8D%81%E9%87%8C%E7%94%BB%E5%BB%8A/</id>
         <title>桂林-Day3-十里画廊</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day3-%E5%8D%81%E9%87%8C%E7%94%BB%E5%BB%8A/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day3-%E5%8D%81%E9%87%8C%E7%94%BB%E5%BB%8A/"/>
         <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-23&lt;/span&gt;&lt;/p&gt;
 &lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
@@ -152,9 +204,30 @@ HashKnownHosts no&lt;/p&gt;
         <updated>2021-06-27T12:48:03.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day2-%E8%A5%BF%E8%A1%97%E6%AD%A5%E8%A1%8C%E8%A1%97/</id>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day3_Ten-mile_Decorated_Corridor/</id>
+        <title>桂林-Day3-十里画廊</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day3_Ten-mile_Decorated_Corridor/"/>
+        <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-23&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
+&lt;p class=&#34;gallery&#34; data-height=&#34;120&#34;&gt;&lt;img data-src=&#34;https://i.loli.net/2021/07/05/VAzyk6GUDjRn4qi.jpg&#34; alt=&#34;69.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/xFL6gM1dSuysZ42.jpg&#34; alt=&#34;68.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/IZBKVLF82AoXwC3.jpg&#34; alt=&#34;67.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/HjEJUKMNPb74nGa.jpg&#34; alt=&#34;70.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/9yaL37oX6FuzRsg.jpg&#34; alt=&#34;66.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/2bqN75soDHhXTRr.jpg&#34; alt=&#34;64.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/HoY2DhMnJO17cdj.jpg&#34; alt=&#34;65.jpg&#34; /&gt;&lt;/p&gt;
+</content>
+        <category term="旅游" scheme="https://blog.chao27.com/categories/travel/" />
+        <category term="桂林" scheme="https://blog.chao27.com/categories/travel/guilin/" />
+        <category term="旅游" scheme="https://blog.chao27.com/tags/%E6%97%85%E6%B8%B8/" />
+        <category term="桂林" scheme="https://blog.chao27.com/tags/%E6%A1%82%E6%9E%97/" />
+        <updated>2021-06-27T12:48:03.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day2-%E8%A5%BF%E8%A1%97%E6%AD%A5%E8%A1%8C%E8%A1%97/</id>
         <title>桂林-Day2-西街步行街</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day2-%E8%A5%BF%E8%A1%97%E6%AD%A5%E8%A1%8C%E8%A1%97/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day2-%E8%A5%BF%E8%A1%97%E6%AD%A5%E8%A1%8C%E8%A1%97/"/>
         <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-22&lt;/span&gt;&lt;/p&gt;
 &lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
@@ -174,9 +247,31 @@ HashKnownHosts no&lt;/p&gt;
         <updated>2021-06-27T12:42:11.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day2-%E6%BC%93%E6%B1%9F/</id>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day2_west_street_pedestrian_street/</id>
+        <title>桂林-Day2-西街步行街</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day2_west_street_pedestrian_street/"/>
+        <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-22&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
+&lt;p class=&#34;gallery&#34; data-height=&#34;120&#34;&gt;&lt;img data-src=&#34;https://i.loli.net/2021/07/05/DAfvrV1LWICyQ2N.jpg&#34; alt=&#34;57.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Wo7VPIcQOiDmerF.jpg&#34; alt=&#34;56.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/YeXAzxsDlcdnkEI.jpg&#34; alt=&#34;59.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/lwqADI4eughLjBd.jpg&#34; alt=&#34;58.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/4RT7JreAXvN93Uu.jpg&#34; alt=&#34;60.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/NkHno8ig3bpzrJD.jpg&#34; alt=&#34;62.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/OCQskbfirTDuIGS.jpg&#34; alt=&#34;63.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/FBiUtXewGDM3aNx.jpg&#34; alt=&#34;61.jpg&#34; /&gt;&lt;/p&gt;
+</content>
+        <category term="旅游" scheme="https://blog.chao27.com/categories/travel/" />
+        <category term="桂林" scheme="https://blog.chao27.com/categories/travel/guilin/" />
+        <category term="旅游" scheme="https://blog.chao27.com/tags/%E6%97%85%E6%B8%B8/" />
+        <category term="桂林" scheme="https://blog.chao27.com/tags/%E6%A1%82%E6%9E%97/" />
+        <updated>2021-06-27T12:42:11.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day2-%E6%BC%93%E6%B1%9F/</id>
         <title>桂林-Day2-漓江</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day2-%E6%BC%93%E6%B1%9F/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day2-%E6%BC%93%E6%B1%9F/"/>
         <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-22&lt;/span&gt;&lt;/p&gt;
 &lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
@@ -225,9 +320,60 @@ HashKnownHosts no&lt;/p&gt;
         <updated>2021-06-27T12:32:30.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day1-%E4%B8%9C%E8%A5%BF%E5%B7%B7/</id>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day2_Lijiang_River/</id>
+        <title>桂林-Day2-漓江</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day2_Lijiang_River/"/>
+        <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-22&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
+&lt;p class=&#34;gallery&#34; data-height=&#34;120&#34;&gt;&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Gq9k7yNEOMjVH3a.jpg&#34; alt=&#34;19.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/xkocXWbUN18Mgat.jpg&#34; alt=&#34;20.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/F3m1ElZoiVpOjtC.jpg&#34; alt=&#34;21.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/7kbS9DphxicZIjR.jpg&#34; alt=&#34;22.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/3rpgiNGbKDfOhFz.jpg&#34; alt=&#34;23.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/pUeQA7VXIjtmaHq.jpg&#34; alt=&#34;24.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/AOl5GiTL36cPdQj.jpg&#34; alt=&#34;25.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/qd8cFunyrh45Lxe.jpg&#34; alt=&#34;26.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/GdJpiwzxW4vOEXb.jpg&#34; alt=&#34;27.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/NjIC4L3uDbymfS2.jpg&#34; alt=&#34;28.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/jxGPbJpOc4uhqdT.jpg&#34; alt=&#34;29.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/EFi1NAvVkJb8Ifm.jpg&#34; alt=&#34;30.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/k8tPBgT6GoCES5h.jpg&#34; alt=&#34;36.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/wMrkajS5fuFqs1P.jpg&#34; alt=&#34;35.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/8N9zdyVMCkP4JLs.jpg&#34; alt=&#34;34.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/2oi4wXjAh6GsPKR.jpg&#34; alt=&#34;40.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/kQPWMvTEcXKiC3x.jpg&#34; alt=&#34;39.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/wM8OScQBf9XNkus.jpg&#34; alt=&#34;37.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/sNj7pDS5i9OZHJh.jpg&#34; alt=&#34;33.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Mzf9VonJ4yO8ALD.jpg&#34; alt=&#34;31.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/1A9CevcynHNS2T6.jpg&#34; alt=&#34;38.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/qIbRe6hjPZcBv5t.jpg&#34; alt=&#34;32.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/OF2PCQzbIDMVfa3.jpg&#34; alt=&#34;47.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/pnXZmiFrPyG9lq7.jpg&#34; alt=&#34;41.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/b5eaEwgfrKv6LWl.jpg&#34; alt=&#34;44.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/p7XhdL4ua3CyAWE.jpg&#34; alt=&#34;46.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/8kJq7omKAeSHnTc.jpg&#34; alt=&#34;42.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/I9NJlBnip27KwDV.jpg&#34; alt=&#34;48.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/UudmwTKAreq5ENG.jpg&#34; alt=&#34;49.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/XDypAKj8oJTGh49.jpg&#34; alt=&#34;45.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/xgsizad3wm9YGXM.jpg&#34; alt=&#34;50.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/oGBVjAO1c8Iz4Ue.jpg&#34; alt=&#34;43.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/AjmlV2I3u1HeK7C.jpg&#34; alt=&#34;55.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/8sR6jTAwSgMx5tc.jpg&#34; alt=&#34;51.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/p5oOfNsgw3cDSja.jpg&#34; alt=&#34;52.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/xeqg7XC6vLztNkW.jpg&#34; alt=&#34;54.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/EHZ83k7MxAiFK4Q.jpg&#34; alt=&#34;53.jpg&#34; /&gt;&lt;/p&gt;
+</content>
+        <category term="旅游" scheme="https://blog.chao27.com/categories/travel/" />
+        <category term="桂林" scheme="https://blog.chao27.com/categories/travel/guilin/" />
+        <category term="旅游" scheme="https://blog.chao27.com/tags/%E6%97%85%E6%B8%B8/" />
+        <category term="桂林" scheme="https://blog.chao27.com/tags/%E6%A1%82%E6%9E%97/" />
+        <updated>2021-06-27T12:32:30.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day1-%E4%B8%9C%E8%A5%BF%E5%B7%B7/</id>
         <title>桂林-Day1-东西巷</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-Day1-%E4%B8%9C%E8%A5%BF%E5%B7%B7/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-Day1-%E4%B8%9C%E8%A5%BF%E5%B7%B7/"/>
         <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-21&lt;/span&gt;&lt;/p&gt;
 &lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
@@ -249,9 +395,33 @@ HashKnownHosts no&lt;/p&gt;
         <updated>2021-06-27T12:25:50.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-%E6%BC%93%E6%B1%9F%E8%A1%8C/</id>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day1_dongxi_lane/</id>
+        <title>桂林-Day1-东西巷</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/guilin_day1_dongxi_lane/"/>
+        <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-21&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&#34;美景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#美景&#34;&gt;#&lt;/a&gt; 美景&lt;/h1&gt;
+&lt;p class=&#34;gallery&#34; data-height=&#34;120&#34;&gt;&lt;img data-src=&#34;https://i.loli.net/2021/07/05/sN9HFBOIW8YPkZc.jpg&#34; alt=&#34;7.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/A8fmUnE9vboIFGg.jpg&#34; alt=&#34;8.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/BoNi45ZCWl92zKV.jpg&#34; alt=&#34;9.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/hG2xXRTntN9KuJb.jpg&#34; alt=&#34;10.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/pXvheaxOSfFR9d3.jpg&#34; alt=&#34;11.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Xf7yreSnFm4jZdR.jpg&#34; alt=&#34;12.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Cvy1AsXQ9p8wgV5.jpg&#34; alt=&#34;13.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/UfPGtaQ73noxq16.jpg&#34; alt=&#34;14.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/p8GXofwCz37aYE1.jpg&#34; alt=&#34;15.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/ZHjonws3KXcNvSP.jpg&#34; alt=&#34;16.jpg&#34; /&gt;&lt;/p&gt;
+</content>
+        <category term="旅游" scheme="https://blog.chao27.com/categories/travel/" />
+        <category term="桂林" scheme="https://blog.chao27.com/categories/travel/guilin/" />
+        <category term="旅游" scheme="https://blog.chao27.com/tags/%E6%97%85%E6%B8%B8/" />
+        <category term="桂林" scheme="https://blog.chao27.com/tags/%E6%A1%82%E6%9E%97/" />
+        <updated>2021-06-27T12:25:50.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-%E6%BC%93%E6%B1%9F%E8%A1%8C/</id>
         <title>桂林-Aha-漓江行</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/%E6%A1%82%E6%9E%97-%E6%BC%93%E6%B1%9F%E8%A1%8C/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/%E6%A1%82%E6%9E%97-%E6%BC%93%E6%B1%9F%E8%A1%8C/"/>
         <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
 &lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-21 -&amp;gt; 2021-06-23&lt;/span&gt;&lt;/p&gt;
 &lt;h1 id=&#34;精彩剪辑&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#精彩剪辑&#34;&gt;#&lt;/a&gt; 精彩剪辑&lt;/h1&gt;
@@ -284,9 +454,44 @@ HashKnownHosts no&lt;/p&gt;
         <updated>2021-06-27T12:22:33.000Z</updated>
     </entry>
     <entry>
-        <id>https://blog.chao27.com/2021/05/13/git%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%88%E5%B9%B6%E8%A7%84%E8%8C%83%E5%8C%96/</id>
+        <id>https://blog.chao27.com/2021/06/27/travel/guilin/guilin_in_Lijiang_River/</id>
+        <title>桂林-Aha-漓江行</title>
+        <link rel="alternate" href="https://blog.chao27.com/2021/06/27/travel/guilin/guilin_in_Lijiang_River/"/>
+        <content type="html">&lt;h1 id=&#34;桂林&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#桂林&#34;&gt;#&lt;/a&gt; 桂林&lt;/h1&gt;
+&lt;p&gt;&lt;span class=&#34;kbd rainbow&#34;&gt;2021-06-21 -&amp;gt; 2021-06-23&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&#34;精彩剪辑&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#精彩剪辑&#34;&gt;#&lt;/a&gt; 精彩剪辑&lt;/h1&gt;
+&lt;p&gt;&lt;div class=&#34;media-container&#34;&gt;&lt;div class=&#34;player&#34; data-type=&#34;video&#34; data-src=&#39;[{&#34;name&#34;:&#34;&#34;,&#34;url&#34;:&#34;/images/lc/guilin/1.mp4#t=0&#34;}]&#39;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/p&gt;
+&lt;h1 id=&#34;精选&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#精选&#34;&gt;#&lt;/a&gt; 精选&lt;/h1&gt;
+&lt;p class=&#34;gallery&#34; data-height=&#34;120&#34;&gt;&lt;img data-src=&#34;https://i.loli.net/2021/07/05/p8GXofwCz37aYE1.jpg&#34; alt=&#34;15.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/7kbS9DphxicZIjR.jpg&#34; alt=&#34;22.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/qIbRe6hjPZcBv5t.jpg&#34; alt=&#34;32.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/k8tPBgT6GoCES5h.jpg&#34; alt=&#34;36.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/EHZ83k7MxAiFK4Q.jpg&#34; alt=&#34;53.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Wo7VPIcQOiDmerF.jpg&#34; alt=&#34;56.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/2bqN75soDHhXTRr.jpg&#34; alt=&#34;64.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/HoY2DhMnJO17cdj.jpg&#34; alt=&#34;65.jpg&#34; /&gt;&lt;/p&gt;
+&lt;h1 id=&#34;飞~&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#飞~&#34;&gt;#&lt;/a&gt; 飞～&lt;/h1&gt;
+&lt;p class=&#34;gallery&#34; data-height=&#34;120&#34;&gt;&lt;img data-src=&#34;https://i.loli.net/2021/07/05/2ux7vadi8VUCZRY.jpg&#34; alt=&#34;1.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/xwuc3IoV5XYH9k6.jpg&#34; alt=&#34;2.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/17NIdBkvHustEDm.jpg&#34; alt=&#34;3.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/2TwkCzbA9FXGURt.jpg&#34; alt=&#34;4.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/9biFGZV25Ngt3cR.jpg&#34; alt=&#34;5.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/Odws8MCn6B9RSla.jpg&#34; alt=&#34;6.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/cLAENR9UIaq7dTl.jpg&#34; alt=&#34;71.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/fFAlVvJtGSU8RNZ.jpg&#34; alt=&#34;72.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/8Y2fKJhn5lXeVyg.jpg&#34; alt=&#34;73.jpg&#34; /&gt;&lt;br /&gt;
+&lt;img data-src=&#34;https://i.loli.net/2021/07/05/BKJ534UaOqrvltP.jpg&#34; alt=&#34;74.jpg&#34; /&gt;&lt;/p&gt;
+</content>
+        <category term="旅游" scheme="https://blog.chao27.com/categories/travel/" />
+        <category term="桂林" scheme="https://blog.chao27.com/categories/travel/guilin/" />
+        <category term="旅游" scheme="https://blog.chao27.com/tags/%E6%97%85%E6%B8%B8/" />
+        <category term="桂林" scheme="https://blog.chao27.com/tags/%E6%A1%82%E6%9E%97/" />
+        <updated>2021-06-27T12:22:33.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://blog.chao27.com/2021/05/13/technology/tool/git/git_standardization_of_commit_and_merge/</id>
         <title>git提交与合并规范化</title>
-        <link rel="alternate" href="https://blog.chao27.com/2021/05/13/git%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%88%E5%B9%B6%E8%A7%84%E8%8C%83%E5%8C%96/"/>
+        <link rel="alternate" href="https://blog.chao27.com/2021/05/13/technology/tool/git/git_standardization_of_commit_and_merge/"/>
         <content type="html">&lt;h1 id=&#34;背景&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#背景&#34;&gt;#&lt;/a&gt; 背景&lt;/h1&gt;
 &lt;div class=&#34;note info&#34;&gt;
 &lt;p&gt;1、项目上的&lt;span class=&#34;kbd&#34;&gt; commit&lt;/span&gt; 信息并不是所有人都了解，导致项目的&lt;span class=&#34;kbd&#34;&gt; commit&lt;/span&gt; 信息并不是按照已约束的规范提交。&lt;/p&gt;
